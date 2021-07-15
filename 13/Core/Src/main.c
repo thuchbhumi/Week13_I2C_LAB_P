@@ -119,9 +119,16 @@ int main(void)
 		if(sclk[0]==0 && sclk[1]==1){
 			IOExpdrExampleReadFlag 	= 1;		//Read State Button
 			IOExpdrExampleWriteFlag = 1;		//IO write in IO and show sate LED
-			eepromExampleWriteFlag 	= 1;		//eeprom Read data IO
-			eepromExampleReadFlag  	= 1;		//
+			eepromExampleWriteFlag 	= 1;		//eeprom Read data IO and write in eeprom
+			eepromExampleReadFlag  	= 1;		//eeprom read data in eeprom
 
+			//IOExpdrExampleReadFlag = 1;
+			IOExpenderReadPinA(&IOExpdrDataReadBack);
+			HAL_Delay(10);
+
+			//eepromExampleWriteFlag = 1;
+			EEPROMWriteExample();
+			HAL_Delay(10);
 		}
 		EEPROMWriteExample();
 		EEPROMReadExample(eepromDataReadBack, 4);
@@ -281,10 +288,11 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void EEPROMWriteExample() {
+void EEPROMWriteExample(uint8_t Write_Eeprom) {
 	if (eepromExampleWriteFlag && hi2c1.State == HAL_I2C_STATE_READY) {
 
-		static uint8_t data[4] = { 0xff, 0x00, 0x55, 0xaa };
+		static uint8_t data[4];
+		data[4] = Write_Eeprom;
 		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x2C, I2C_MEMADD_SIZE_16BIT,
 				data, 4);
 
