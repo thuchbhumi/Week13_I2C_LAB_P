@@ -127,14 +127,10 @@ int main(void)
 			HAL_Delay(10);
 
 			//eepromExampleWriteFlag = 1;
-			EEPROMWriteExample();
+			EEPROMWriteExample(IOExpdrDataReadBack);
 			HAL_Delay(10);
 		}
-		EEPROMWriteExample();
-		EEPROMReadExample(eepromDataReadBack, 4);
-
-		IOExpenderReadPinA(&IOExpdrDataReadBack);
-		IOExpenderWritePinB(IOExpdrDataWrite);
+		eepromExampleReadFlag = 1;
 
     /* USER CODE END WHILE */
 
