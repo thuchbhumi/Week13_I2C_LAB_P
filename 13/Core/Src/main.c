@@ -294,7 +294,7 @@ void EEPROMWriteExample(uint8_t Write_Eeprom) {
 
 		static uint8_t data[4];
 		data[3] = Write_Eeprom;
-		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x2C, I2C_MEMADD_SIZE_16BIT,
+		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x29, I2C_MEMADD_SIZE_16BIT,
 				data, 4);
 
 		eepromExampleWriteFlag = 0;
@@ -303,7 +303,7 @@ void EEPROMWriteExample(uint8_t Write_Eeprom) {
 void EEPROMReadExample(uint8_t *Rdata, uint16_t len) {
 	if (eepromExampleReadFlag && hi2c1.State == HAL_I2C_STATE_READY) {
 
-		HAL_I2C_Mem_Read_IT(&hi2c1, EEPROM_ADDR, 0x2c, I2C_MEMADD_SIZE_16BIT,
+		HAL_I2C_Mem_Read_IT(&hi2c1, EEPROM_ADDR, 0x29, I2C_MEMADD_SIZE_16BIT,
 				Rdata, len);
 		eepromExampleReadFlag = 0;
 	}
