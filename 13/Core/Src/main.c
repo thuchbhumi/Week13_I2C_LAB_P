@@ -53,7 +53,8 @@ uint8_t IOExpdrExampleWriteFlag = 0;
 uint8_t IOExpdrExampleReadFlag = 0;
 uint8_t eepromDataReadBack[4];
 uint8_t IOExpdrDataReadBack;
-uint8_t IOExpdrDataWrite = 0b01010101;
+uint8_t IOExpdrDataWrite ;
+uint8_t sclk[2] = {0};
 
 /* USER CODE END PV */
 
@@ -63,7 +64,7 @@ static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 /* USER CODE BEGIN PFP */
-void EEPROMWriteExample();
+void EEPROMWriteExample(uint8_t Write_Eeprom);
 void EEPROMReadExample(uint8_t *Rdata, uint16_t len);
 
 void IOExpenderInit();
@@ -115,22 +116,26 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	while (1) {
-		sclk[0] = HAL_GPIO_ReadPin(GPIOC, GPIO_Pin_13);
+		sclk[0] = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
 		if(sclk[0]==0 && sclk[1]==1){
-			IOExpdrExampleReadFlag 	= 1;		//Read State Button
-			IOExpdrExampleWriteFlag = 1;		//IO write in IO and show sate LED
-			eepromExampleWriteFlag 	= 1;		//eeprom Read data IO and write in eeprom
-			eepromExampleReadFlag  	= 1;		//eeprom read data in eeprom
-
-			//IOExpdrExampleReadFlag = 1;
-			IOExpenderReadPinA(&IOExpdrDataReadBack);
+			IOExpdrExampleReadFlag 	= 1;				//give condition in IO is true
+			IOExpenderReadPinA(&IOExpdrDataReadBack);	//Read State Button
 			HAL_Delay(10);
-
-			//eepromExampleWriteFlag = 1;
-			EEPROMWriteExample(IOExpdrDataReadBack);
+			eepromExampleWriteFlag 	= 1;				//eeprom Read data IO and write in eeprom
+			EEPROMWriteExample(IOExpdrDataReadBack);	//eeprom write data at address eeprom
 			HAL_Delay(10);
+			IOExpdrExampleWriteFlag = 1;				//IO write in IO and show sate LED
+
+
 		}
-		eepromExampleReadFlag = 1;
+
+		eepromExampleReadFlag = 1;						//eeprom read data in eeprom
+		EEPROMReadExample(eepromDataReadBack, 4);		//eeprom read data at address eeprom
+		HAL_Delay(10);
+		IOExpdrExampleWriteFlag = 1;					//give condition in IO is true
+		IOExpenderWritePinB(eepromDataReadBack[3]);		//show state LED
+		HAL_Delay(10);
+		sclk[1]=sclk[0];
 
     /* USER CODE END WHILE */
 
@@ -288,11 +293,9 @@ void EEPROMWriteExample(uint8_t Write_Eeprom) {
 	if (eepromExampleWriteFlag && hi2c1.State == HAL_I2C_STATE_READY) {
 
 		static uint8_t data[4];
-		data[4] = Write_Eeprom;
+		data[3] = Write_Eeprom;
 		HAL_I2C_Mem_Write_IT(&hi2c1, EEPROM_ADDR, 0x2C, I2C_MEMADD_SIZE_16BIT,
 				data, 4);
-
-
 
 		eepromExampleWriteFlag = 0;
 	}
